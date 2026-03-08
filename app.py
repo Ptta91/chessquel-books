@@ -33,10 +33,20 @@ st.markdown("""
 
 # FUNCIÓN PARA REPARAR LINKS DE DRIVE
 def fix_drive_link(url):
-    if 'drive.google.com' in str(url):
-        file_id = url.split('/')[-2] if 'view' in url else url.split('=')[-1]
-        return f"https://lh3.googleusercontent.com/d/{file_id}"
-    return url
+    try:
+        if 'drive.google.com' in str(url):
+            # Extrae el ID del archivo del enlace de compartir
+            if '/d/' in url:
+                file_id = url.split('/d/')[1].split('/')[0]
+            elif 'id=' in url:
+                file_id = url.split('id=')[1].split('&')[0]
+            else:
+                return url
+            # Retorna el link de miniatura de alta resolución (600px)
+            return f"https://drive.google.com/thumbnail?id={file_id}&sz=w600"
+        return url
+    except:
+        return url
 
 # CONEXIÓN
 url_sheet = "https://docs.google.com/spreadsheets/d/1dO1S2Afj7bXDthfAHGueOU-HHpm3BAaqmo0OlvxepsQ/edit?usp=sharing"
